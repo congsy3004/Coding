@@ -1,0 +1,6 @@
+{
+	"files.associations": {
+		"llist_type.h": "c",
+		"stdint.h": "c"
+	}
+}
