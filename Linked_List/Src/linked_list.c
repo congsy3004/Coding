@@ -12,7 +12,6 @@
  *                           << Include Files >>                                   
  * -------------------------------------------------------------------------*/
 #include "linked_list.h"
-#include "llist_type.h"
 #include "stdlib.h"
 
 /* -------------------------------------------------------------------------
@@ -25,27 +24,18 @@ typedef llist_retval_t (*fnp_free_node_t)(llist_node_t*);
  @param data pointer to the data of node 
  @param p_next pointer storing the address of the next node 
  */
- typedef struct llist_node
+struct llist_node
 {
 	void* data;
 	llist_node_t* p_next;
 };
 
-typedef struct  llist_handler
+struct llist_handler
 {
 	fnp_free_node_t free_node_cb;
 };
 
-/** 
- * @brief This struct describes a linked list 
- */
-typedef struct llist_desc
-{
-	llist_node_t* p_head;
-	llist_node_t* p_tail;
-	uint32_t 	  size;
-	llist_handler_t llist_handler_cb
-};
+
 
 
 /* -------------------------------------------------------------------------
@@ -71,12 +61,12 @@ static llist_retval_t free_node(llist_node_t* node);
 /* -------------------------------------------------------------------------
  *                           << Public Functions Definitions >>                                   
  * -------------------------------------------------------------------------*/
-llist_desc_t* llist_create(uint32_t size)
+llist_desc_t* llist_create()
 {
-	llist_desc_t* new_list = malloc(size);
+	llist_desc_t* new_list = malloc(sizeof(llist_desc_t));
 	new_list->p_head = NULL;
 	new_list->p_tail = NULL;
-	new_list->size = size;
+	new_list->node_size = sizeof(llist_node_t);
 	new_list->llist_handler_cb.free_node_cb = free_node;
 
 	return new_list;
@@ -94,19 +84,30 @@ llist_retval_t llist_is_empty( llist_desc_t* list )
 
 llist_retval_t llist_ins_head( llist_desc_t* list, void* data )
 {
-	llist_node_t* new_node = malloc(sizeof(llist_node_t));
-	if ( LLIST_RET_TRUE == llist_is_empty(list) )
+	llist_retval_t retval = LLIST_RET_OK;
+
+	llist_node_t* new_node = malloc(list->node_size);
+	if ( new_node == NULL )
 	{
-		list->p_tail = new_node;
+		retval = LLIST_RET_NOK;
 	}
-	new_node->data =  data;
-	new_node->p_next = list->p_head;
-	list->p_head = new_node;
+	else
+	{
+		if ( LLIST_RET_TRUE == llist_is_empty(list) )
+		{
+			list->p_tail = new_node;
+		}
+		new_node->data =  data;
+		new_node->p_next = list->p_head;
+		list->p_head = new_node;
+	}
+
+	return retval;
 }
 
 llist_retval_t llist_ins_tail( llist_desc_t* list, void* data )
 {
-	llist_node_t* new_node = malloc(sizeof(llist_node_t));
+	llist_node_t* new_node = malloc(list->node_size);
 	if ( LLIST_RET_TRUE == llist_is_empty(list) )
 	{
 		list->p_head = new_node;
