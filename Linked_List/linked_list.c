@@ -1,10 +1,11 @@
 /******************************************************************************
- * @file           : Untitled-1
- * @brief          : Brief description
+ * @file           : linked_list.c
+ * @brief          : This files describes all the public APIs and private function
+ * of the singly-linked list library.
  * 
  * Detailed description of the file's purpose and functionality.
  *
- * @author         : Your Name
+ * @author         : congsy3004
  * @date           : 09-Jul-2025
  ******************************************************************************/
 
@@ -208,8 +209,8 @@ void ll_iterator_destroy(ll_iterator_t **ite)
 {
     if (ite && *ite)
     {
-        free(*ite);
-        *ite = NULL;
+        free(*ite); // Free the memory allocated for ll_iterator_t struct
+        *ite = NULL; // Set the ite pointer to NULL to prevent dangling pointer
     }
 }
 
@@ -250,12 +251,32 @@ uint32_t ll_list_count( ll_list_t* list )
 	}
 }
 
-#if 0
-ll_retva_t ll_pop_head( ll_list_t* list );
-ll_retva_t ll_pop_tail( ll_list_t* list );
+ll_retval_t ll_pop_head( ll_list_t* list )
+{
+	/**< Create a temporary node */
+	ll_node_t* popped_node = NULL;
+	if ( !list || !list->p_head)
+	{
+		return LL_RET_NOK;
+	}
+	else{
+		/**< Save the current head node before move it to the next node */
+		popped_node = list->p_head;
+		/**< Set the following node as the new head */
+		list->p_head = list->p_head->p_next;
+		/**< Free the memory consumed by the old head */
+		free_node(popped_node);
+	}
+	
+}
+ll_retval_t ll_pop_tail( ll_list_t* list );
 
-ll_retva_t ll_find(ll_list_t* list, void* dest, void* find );
-#endif 
+ll_retval_t ll_find(ll_list_t* list, void* dest, void* find );
+
+/***************************
+ *      TEST PART          *
+ ***************************/
+ 
 void print_list(ll_list_t* list);
 void main()
 {
@@ -263,31 +284,33 @@ void main()
 	uint8_t array1[] = {8,9,10,11,12,13};
 	char string1[] = {'H','e','l','l','o','_'};
 	char string2[] = {'W','o','r','l','d'};
-	ll_list_t* list1 = ll_create();
-	if ( list1  )
+	// ll_list_t* list1 = ll_create();
+	// if ( list1  )
+	// {
+	// 	printf("a new list has been created at %p\n",list1);
+	// }
+	// else
+	// {
+	// 	printf("FAILED to create a new list\n");
+	// }
+	
+	// for (size_t i = 0; i < sizeof(string1); i++)
+	// {
+	// 	ll_ins_tail(list1, (void*)&string1[i]);
+	// }
+	
+	// for (size_t i = 0; i < sizeof(string2); i++)
+	// {
+	// 	ll_ins_tail(list1, (void*)&string2[i]);
+	// }
+	
+	// print_list(list1);
+	uint8_t* ptr = &array[0];
+	for (size_t i = 0; i < sizeof(array); i++)
 	{
-		printf("a new list has been created at %p\n",list1);
-		printf("sizeof string1 =  %d\n",sizeof(string1));
-		printf("sizeof string2 =  %d\n",sizeof(string2));
-	}
-	else
-	{
-		printf("FAILED to create a new list\n");
+		printf("%d - %d\n", *(ptr + i), array[i]);
 	}
 	
-	for (size_t i = 0; i < sizeof(string1); i++)
-	{
-		ll_ins_tail(list1, (void*)&string1[i]);
-	}
-	
-	print_list(list1);
-	
-	for (size_t i = 0; i < sizeof(string2); i++)
-	{
-		ll_ins_tail(list1, (void*)&string2[i]);
-	}
-	
-	print_list(list1);
 	return;
 }
 
