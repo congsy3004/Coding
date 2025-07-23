@@ -1,7 +1,9 @@
 {
 	"files.associations": {
-		"llist_type.h": "c",
+		"ll_type.h": "c",
 		"stdint.h": "c",
-		"linked_list.h": "c"
+		"linked_list.h": "c",
+		"stdio.h": "c",
+		"stdlib.h": "c"
 	}
 }
